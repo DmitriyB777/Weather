@@ -1,0 +1,112 @@
+﻿@model WeatherModel
+@{
+    ViewData["Title"] = "Show Weather";
+}
+<form method="get" enctype="text/plain" asp-controller="Home" asp-action="GetWeather" class="row g-3">
+    <label asp-for="Month" class="form-label"></label>
+    <select asp-for="Month" class="form-select form-select-sm" aria-label=".form-select-sm example">
+        <option selected value="">Все</option>
+        <option value="1">Январь</option>
+        <option value="2">Февраль</option>
+        <option value="3">Март</option>
+        <option value="4">Апрель</option>
+        <option value="5">Май</option>
+        <option value="6">Июнь</option>
+        <option value="7">Июль</option>
+        <option value="8">Август</option>
+        <option value="9">Сентябрь</option>
+        <option value="10">Октябрь</option>
+        <option value="11">Ноябрь</option>
+        <option value="12">Декабрь</option>
+    </select>
+    <label asp-for="Year" class="form-label"></label>
+    <select asp-for="Year" class="form-select form-select-sm" aria-label=".form-select-sm example">
+        <option selected value="">Все</option>
+        @for (int i = 2000;i <= 2050;i++)
+        {
+            <option value="@i">@i</option>
+        }
+    </select>
+    <input asp-for="CurrentPage" type="hidden" value="0" />
+    <input asp-for="CoutRows" type="hidden" value="10" />
+    <input class="btn btn-secondary btn-lg" type="submit" value="Получить" />
+</form>
+
+@if (Model?.GetWeathers != null)
+{
+    <br />
+    <div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Дата</th>
+                    <th scope="col">Время</th>
+                    <th scope="col">Температура воздуха, гр. Ц.</th>
+                    <th scope="col">Отн. влажность воздуха, %</th>
+                    <th scope="col">Точка росы, гр. Ц. </th>
+                    <th scope="col">Атм. давление, мм рт.ст.</th>
+                    <th scope="col">Направление ветра</th>
+                    <th scope="col">Скорость ветра, м/с</th>
+                    <th scope="col">Облачность, %</th>
+                    <th scope="col">Нижняя граница облачности, м</th>
+                    <th scope="col">Горизонтальная видимость, км</th>
+                    <th scope="col">Погодные явления</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int index = Model.CurrentPage * Model.CoutRows + 1;
+                }
+                @foreach (var item in Model.GetWeathers)
+                {
+                    <tr>
+                        <th scope="row">@index</th>
+                        <td>@item.Date</td>
+                        <td>@item.Time</td>
+                        <td>@item.AirTemperature</td>
+                        <td>@item.RelAirHumidity</td>
+                        <td>@item.DewPoint</td>
+                        <td>@item.AtmPressure</td>
+                        <td>@item.WindDirection</td>
+                        <td>@item.WindSpeed</td>
+                        <td>@item.CloudCover</td>
+                        <td>@item.LowerCloudLimit</td>
+                        <td>@item.HorizontalVisibility</td>
+                        <td>@item.WeatherPhenomena</td>
+                    </tr>
+                    index++;
+                }
+            </tbody>
+        </table>
+
+        @if (Model.CoutRows < Model.CoutData)
+        {
+            <nav aria-label="...">
+                <ul class="pagination">
+                    <li class="page-item @(Model.CurrentPage == 0 ? "disabled" : "")">
+                        <a class="page-link" asp-controller="Home" asp-action="GetWeather" asp-route-month="@Model.Month" asp-route-Year="@Model.Year" asp-route-currentpage="@(Model.CurrentPage - 1)" asp-route-coutrows="@Model.CoutRows">Предыдущая</a>
+                    </li>
+                    @for(int i = 0;i < Model.CountPages;i++)
+                    {
+                        if (Model.CurrentPage == i)
+                        {
+                            <li class="page-item active" aria-current="page">
+                                <span class="page-link">@(i + 1)</span>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-controller="Home" asp-action="GetWeather" asp-route-month="@Model.Month" asp-route-Year="@Model.Year" asp-route-currentpage="@i" asp-route-coutrows="@Model.CoutRows">@(i + 1)</a>
+                            </li>
+                        }
+                    }
+                    <li class="page-item @(Model.CurrentPage + 1 == Model.CountPages ? "disabled" : "")">
+                        <a class="page-link" asp-controller="Home" asp-action="GetWeather" asp-route-month="@Model.Month" asp-route-Year="@Model.Year" asp-route-currentpage="@(Model.CurrentPage + 1)" asp-route-coutrows="@Model.CoutRows">Следующая</a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    </div>
+}

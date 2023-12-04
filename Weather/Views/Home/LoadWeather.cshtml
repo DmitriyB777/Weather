@@ -1,0 +1,29 @@
+﻿@model FileModel
+@{
+    ViewData["Title"] = "Load Weather";
+}
+
+<form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Upload" class="row g-3">
+    <label asp-for="FormFile" class="form-label"></label>
+    <input asp-for="FormFile"
+           class="form-control form-control-lg" 
+           accept=".zip, .xlsx, .xls, .csv" />
+    <span asp-validation-for="FormFile"></span>
+
+    <input class="btn btn-secondary btn-lg" type="submit" value="Отправить" />
+</form>
+<br />
+@if (Model != null)
+{
+    <div class="card" style="width: 100%">
+        <ul class="list-group list-group-flush">
+            @if (Model.Errors != null)
+            {
+                @foreach(string item in Model.Errors)
+                {
+                    <li class="list-group-item">@item</li>
+                }
+            }
+        </ul>
+    </div>
+}
